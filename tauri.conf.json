@@ -3,7 +3,7 @@
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
     "devPath": "http://localhost:1420",
-    "distDir": "../dist"
+    "distDir": "../src"
   },
   "package": {
     "productName": "zip-tool-app",
@@ -14,7 +14,7 @@
       "all": false,
       "fs": {
         "all": true,
-        "scope": ["$HOME/**", "$DESKTOP/**", "$DOCUMENT/**", "$DOWNLOAD/**"]
+        "scope": ["$HOME/**", "$DESKTOP/**", "$DOCUMENT/**", "$DOWNLOAD/**", "$APPDATA/**"]
       },
       "dialog": {
         "all": true,
@@ -26,6 +26,10 @@
       },
       "path": {
         "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["$HOME/**"]
       },
       "shell": {
         "all": false,
@@ -48,7 +52,7 @@
         "icons/icon.ico"
       ],
       "identifier": "com.zip-tool-app.dev",
-      "longDescription": "",
+      "longDescription": "A high-performance ZIP tool built with Rust.",
       "macOS": {
         "entitlements": null,
         "exceptionDomain": "",
@@ -66,7 +70,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' asset: https://asset.localhost"
     },
     "updater": {
       "active": false
@@ -76,7 +80,7 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "Zip Tool App",
+        "title": "Zip Tool Pro",
         "width": 800
       }
     ]
