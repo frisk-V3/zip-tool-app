@@ -3,7 +3,7 @@ name: "Auto Build & Release"
 on:
   push:
     branches:
-      - main # mainブランチに保存（push）されたら即実行
+      - main
 
 jobs:
   publish:
@@ -40,8 +40,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          # タグがない場合は、常に 'latest' という名前でリリースを更新し続ける設定
+          # ここが重要！src-tauri フォルダ内を見に行くように指定
+          projectPath: "src-tauri" 
           tagName: latest
           releaseName: "Latest Build"
           releaseBody: "Latest automated build from main branch."
-          overwrite: true # 既存のファイルを新しいビルドで上書き
