@@ -1,10 +1,9 @@
-name: "Release"
+name: "Auto Build & Release"
 
 on:
   push:
-    # v1.0.0 のようなタグをつけた時に、自動で全OSビルドが走る
-    tags:
-      - 'v*'
+    branches:
+      - main # mainブランチに保存（push）されたら即実行
 
 jobs:
   publish:
@@ -13,42 +12,36 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Windows, Mac, Linuxの3環境で並列ビルド
         platform: [macos-latest, ubuntu-22.04, windows-latest]
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v4
 
-      # 1. 必要な環境（Node.js / Rust）を自動セットアップ
       - name: setup node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
 
-      # 2. Linux(Ubuntu)特有のライブラリを自動インストール
       - name: install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
 
-      # 3. npmパッケージをインストール（コマンド不要で自動実行）
       - name: install frontend dependencies
         run: npm install
 
-      # 4. Tauri公式のアクションでビルドし、Releaseページへ自動アップロード
       - name: build and release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ # package.jsonのバージョンを自動取得
-          releaseName: "zip-tool-app v__VERSION__"
-          releaseBody: "Automated release from GitHub Actions"
-          releaseDraft: false
-          prerelease: false
+          # タグがない場合は、常に 'latest' という名前でリリースを更新し続ける設定
+          tagName: latest
+          releaseName: "Latest Build"
+          releaseBody: "Latest automated build from main branch."
+          overwrite: true # 既存のファイルを新しいビルドで上書き
